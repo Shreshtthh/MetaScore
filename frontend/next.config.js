@@ -1,14 +1,26 @@
+const path = require('path')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
   experimental: {
     appDir: true,
   },
   images: {
-    domains: ['localhost'],
+    unoptimized: true,
   },
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false, net: false, tls: false };
-    return config;
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add aliases
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
+    
+    config.resolve.fallback = {
+      fs: false,
+      net: false,
+      tls: false,
+    }
+    
+    return config
   },
 }
 

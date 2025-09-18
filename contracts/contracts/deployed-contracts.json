@@ -1,0 +1,17 @@
+{
+  "visualEngine": "0x7420aa5e5bf9d1f4ea543bc0c60ada179e9cd6ee",
+  "metaScore": "0x1ba97a3e916422574053aed16a5d1b8e14b160b4",
+  "activityTracker": "0xe290ea8e5d6b6d42fc7e61b1f96ff764b4983486",
+  "demoToken": "0x94499a367b48f8f0b857eebe6a0b7e480ce9abf1",
+  "demoNFT": "0xfcf8195b4abc2006a1f6b1c59e29c9e2c06407e0",
+  "paymentContract": "0x2f7c52f978c1ae91fcdc708d071d144ff9d394a6",
+  "deploymentBlock": "178175034",
+  "network": "Somnia Testnet",
+  "chainId": 50312,
+  "timestamp": 1758057600,
+  "deployer": "0xA2c6f9921B19474e6ab7a8f8C6d7B63510efDBA7",
+  "gasUsed": {
+    "total": "111091850",
+    "totalCost": "0.11109185"
+  }
+}

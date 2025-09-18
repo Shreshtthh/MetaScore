@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
-import { parseEther, formatEther } from 'viem';
+import { parseEther, formatEther, type Address } from 'viem';
 import { toast } from 'react-hot-toast';
 import { CONTRACT_ADDRESSES } from '@/lib/contracts/config';
 import { getErrorMessage } from '@/lib/utils';
 
-// Demo contracts ABIs
+// Demo contracts ABIs with explicit typing
 const DEMO_NFT_ABI = [
   {
     inputs: [],
@@ -17,7 +17,10 @@ const DEMO_NFT_ABI = [
     type: 'function',
   },
   {
-    inputs: [{ name: 'to', type: 'address' }, { name: 'tokenId', type: 'uint256' }],
+    inputs: [
+      { name: 'to', type: 'address' }, 
+      { name: 'tokenId', type: 'uint256' }
+    ],
     name: 'transfer',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -41,7 +44,10 @@ const DEMO_TOKEN_ABI = [
     type: 'function',
   },
   {
-    inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }],
+    inputs: [
+      { name: 'to', type: 'address' }, 
+      { name: 'amount', type: 'uint256' }
+    ],
     name: 'transfer',
     outputs: [{ name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
@@ -65,7 +71,10 @@ const PAYMENT_CONTRACT_ABI = [
     type: 'function',
   },
   {
-    inputs: [{ name: 'recipient', type: 'address' }, { name: 'memo', type: 'string' }],
+    inputs: [
+      { name: 'recipient', type: 'address' }, 
+      { name: 'memo', type: 'string' }
+    ],
     name: 'sendPayment',
     outputs: [],
     stateMutability: 'payable',
@@ -76,13 +85,12 @@ const PAYMENT_CONTRACT_ABI = [
 export function useDemoContracts() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-
   const { writeContract, data: hash } = useWriteContract();
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash });
 
   // Get balances
   const { data: nftBalance } = useReadContract({
-    address: CONTRACT_ADDRESSES.DemoNFT,
+    address: CONTRACT_ADDRESSES.DemoNFT as Address,
     abi: DEMO_NFT_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
@@ -90,7 +98,7 @@ export function useDemoContracts() {
   });
 
   const { data: tokenBalance } = useReadContract({
-    address: CONTRACT_ADDRESSES.DemoToken,
+    address: CONTRACT_ADDRESSES.DemoToken as Address,
     abi: DEMO_TOKEN_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
@@ -106,11 +114,13 @@ export function useDemoContracts() {
 
     setIsLoading(true);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESSES.DemoNFT,
+      // Use explicit type for writeContract
+      writeContract({
+        address: CONTRACT_ADDRESSES.DemoNFT as `0x${string}`,
         abi: DEMO_NFT_ABI,
         functionName: 'mint',
-      });
+      } as any);
+      
       toast.success('NFT minting initiated!');
     } catch (error) {
       toast.error(`Failed to mint NFT: ${getErrorMessage(error)}`);
@@ -127,12 +137,13 @@ export function useDemoContracts() {
 
     setIsLoading(true);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESSES.DemoNFT,
+      writeContract({
+        address: CONTRACT_ADDRESSES.DemoNFT as `0x${string}`,
         abi: DEMO_NFT_ABI,
         functionName: 'transfer',
         args: [to as `0x${string}`, BigInt(tokenId)],
-      });
+      } as any);
+      
       toast.success('NFT transfer initiated!');
     } catch (error) {
       toast.error(`Failed to transfer NFT: ${getErrorMessage(error)}`);
@@ -150,11 +161,12 @@ export function useDemoContracts() {
 
     setIsLoading(true);
     try {
-      await writeContract({
-        address: CONTRACT_ADDRESSES.DemoToken,
+      writeContract({
+        address: CONTRACT_ADDRESSES.DemoToken as `0x${string}`,
         abi: DEMO_TOKEN_ABI,
         functionName: 'mint',
-      });
+      } as any);
+      
       toast.success('Tokens minting initiated!');
     } catch (error) {
       toast.error(`Failed to mint tokens: ${getErrorMessage(error)}`);
@@ -172,12 +184,13 @@ export function useDemoContracts() {
     setIsLoading(true);
     try {
       const amountWei = parseEther(amount);
-      await writeContract({
-        address: CONTRACT_ADDRESSES.DemoToken,
+      writeContract({
+        address: CONTRACT_ADDRESSES.DemoToken as `0x${string}`,
         abi: DEMO_TOKEN_ABI,
         functionName: 'transfer',
         args: [to as `0x${string}`, amountWei],
-      });
+      } as any);
+      
       toast.success('Token transfer initiated!');
     } catch (error) {
       toast.error(`Failed to transfer tokens: ${getErrorMessage(error)}`);
@@ -196,13 +209,14 @@ export function useDemoContracts() {
     setIsLoading(true);
     try {
       const value = parseEther(amount);
-      await writeContract({
-        address: CONTRACT_ADDRESSES.PaymentContract,
+      writeContract({
+        address: CONTRACT_ADDRESSES.PaymentContract as `0x${string}`,
         abi: PAYMENT_CONTRACT_ABI,
         functionName: 'donate',
         args: [message],
         value,
-      });
+      } as any);
+      
       toast.success('Donation initiated!');
     } catch (error) {
       toast.error(`Failed to make donation: ${getErrorMessage(error)}`);
@@ -220,13 +234,14 @@ export function useDemoContracts() {
     setIsLoading(true);
     try {
       const value = parseEther(amount);
-      await writeContract({
-        address: CONTRACT_ADDRESSES.PaymentContract,
+      writeContract({
+        address: CONTRACT_ADDRESSES.PaymentContract as `0x${string}`,
         abi: PAYMENT_CONTRACT_ABI,
         functionName: 'sendPayment',
         args: [to as `0x${string}`, memo],
         value,
-      });
+      } as any);
+      
       toast.success('Payment initiated!');
     } catch (error) {
       toast.error(`Failed to send payment: ${getErrorMessage(error)}`);

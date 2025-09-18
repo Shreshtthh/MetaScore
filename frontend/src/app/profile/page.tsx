@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { motion } from 'framer-motion';
 import { User, Trophy, Activity, Calendar, ExternalLink, Copy } from 'lucide-react';
-import {Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import ScoreCard from '@/components/metascore/ScoreCard';
 import CategoryBreakdown from '@/components/metascore/CategoryBreakdown';
@@ -15,13 +15,18 @@ import ProgressChart from '@/components/charts/ProgressChart';
 import { useMetaScore } from '@/hooks/useMetaScore';
 import { shortenAddress, getExplorerUrl, timeAgo } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
-import { PageLoader } from '@/components/ui/Loader';
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
   const { userMetaScore, isLoading, refreshData } = useMetaScore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isMounted, setIsMounted] = useState(false);
   const toast = useToast();
+
+  // Fix hydration by waiting for component to mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const copyAddress = () => {
     if (address) {
@@ -29,6 +34,18 @@ export default function ProfilePage() {
       toast.success('Address copied to clipboard!');
     }
   };
+
+  // Show loading state until mounted
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-white/10 border-t-somnia-primary rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-white/60">Loading Profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isConnected) {
     return (
@@ -44,10 +61,6 @@ export default function ProfilePage() {
         </Card>
       </div>
     );
-  }
-
-  if (isLoading) {
-    return <PageLoader />;
   }
 
   const tabs = [
@@ -205,43 +218,6 @@ export default function ProfilePage() {
           {activeTab === 'nft' && (
             <div className="max-w-2xl mx-auto">
               <NFTDisplay userMetaScore={userMetaScore} className="mb-8" />
-              {userMetaScore?.nftMetadata && (
-                <Card glass>
-                  <CardHeader>
-                    <CardTitle>NFT Metadata</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-white mb-1">Name</h4>
-                      <p className="text-white/60">{userMetaScore.nftMetadata.name}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-white mb-1">Description</h4>
-                      <p className="text-white/60">{userMetaScore.nftMetadata.description}</p>
-                    </div>
-                    {userMetaScore.nftMetadata.attributes && (
-                      <div>
-                        <h4 className="font-medium text-white mb-2">Attributes</h4>
-                        <div className="grid grid-cols-2 gap-3">
-                          {userMetaScore.nftMetadata.attributes.map((attr, index) => (
-                            <div
-                              key={index}
-                              className="p-3 rounded-lg bg-white/5 border border-white/10"
-                            >
-                              <div className="text-xs text-white/60 mb-1">
-                                {attr.trait_type}
-                              </div>
-                              <div className="text-sm font-medium text-white">
-                                {attr.value}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
             </div>
           )}
 

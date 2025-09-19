@@ -138,7 +138,6 @@ coverage/
 coverage.json
 
 # Foundry
-lib/
 cache_forge/
 out/
 broadcast/

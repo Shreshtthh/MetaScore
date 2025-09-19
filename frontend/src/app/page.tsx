@@ -93,13 +93,16 @@ export default function HomePage() {
                 Living Achievement NFT that evolves based on your on-chain activity
               </p>
 
+              {/* Fixed Connect Button Container */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="mb-12"
+                className="mb-12 flex justify-center"
               >
-                <ConnectButton />
+                <div className="flex justify-center items-center w-full">
+                  <ConnectButton />
+                </div>
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -282,7 +285,7 @@ export default function HomePage() {
             <Card glass hover className="h-full cursor-pointer">
               <CardContent className="p-6 text-center">
                 <Users className="w-8 h-8 text-somnia-secondary mx-auto mb-3" />
-                <h3 className="font-semibold text-white mb-1">Leaderboard</h3>
+                <h3 className="font-semibent text-white mb-1">Leaderboard</h3>
                 <p className="text-white/60 text-sm">Compare with others</p>
               </CardContent>
             </Card>
